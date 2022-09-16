@@ -1,0 +1,20 @@
+{
+	"cursor": "/Users/latona2/bitbucket/sap-api-integrations-inbound-delivery-reads/SAP_API_Caller/caller.go#L74",
+	"function": "sap-api-integrations-inbound-delivery-reads/SAP_API_Caller.(*SAPAPICaller).Header",
+	"level": "INFO",
+	"message": {
+		"AddressID": "",
+		"Building": "",
+		"BusinessPartnerName1": "",
+		"CityName": "",
+		"CorrespondenceLanguage": "",
+		"Country": "",
+		"FaxNumber": "",
+		"Nation": "",
+		"PhoneNumber": "",
+		"PostalCode": "",
+		"Region": "",
+		"StreetName": ""
+	},
+	"time": "2022-09-16T22:42:12+09:00"
+}

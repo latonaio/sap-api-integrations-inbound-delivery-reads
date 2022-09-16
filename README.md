@@ -37,6 +37,8 @@ sap-api-integrations-inbound-delivery-reads において、API への値入力�
 
 * inoutSDC.InboundDelivery.DeliveryDocument（入荷伝票）
 * inoutSDC.InboundDelivery.DeliveryDocumentItem.DeliveryDocumentItem（入荷伝票明細）
+* inputSDC.InboundDelivery.DeliveryDocumentItem.ReferenceSDDocument（参照SD伝票）
+* inputSDC.InboundDelivery.DeliveryDocumentItem.ReferenceSDDocumentItem（参照SD伝票明細）
 
 ## SAP API Bussiness Hub の API の選択的コール
 
@@ -72,7 +74,7 @@ accepter における データ種別 の指定に基づいて SAP_API_Caller �
 caller.go の func() 毎 の 以下の箇所が、指定された API をコールするソースコードです。  
 
 ```
-func (c *SAPAPICaller) AsyncGetInboundDelivery(deliveryDocument, deliveryDocumentItem string, accepter []string) {
+func (c *SAPAPICaller) AsyncGetInboundDelivery(deliveryDocument, deliveryDocumentItem, referenceSDDocument, referenceSDDocumentItem string, accepter []string) {
 	wg := &sync.WaitGroup{}
 	wg.Add(len(accepter))
 	for _, fn := range accepter {
@@ -85,6 +87,11 @@ func (c *SAPAPICaller) AsyncGetInboundDelivery(deliveryDocument, deliveryDocumen
 		case "Item":
 			func() {
 				c.Item(deliveryDocument, deliveryDocumentItem)
+				wg.Done()
+			}()
+		case "PurchaseOrder":
+			func() {
+				c.PurchaseOrder(referenceSDDocument, referenceSDDocumentItem)
 				wg.Done()
 			}()
 		default:
@@ -102,10 +109,83 @@ func (c *SAPAPICaller) AsyncGetInboundDelivery(deliveryDocument, deliveryDocumen
 
 ```
 {
-	"cursor": "/Users/latona2/bitbucket/sap-api-integrations-inbound-delivery-reads/SAP_API_Caller/caller.go#L50",
+	"cursor": "/Users/latona2/bitbucket/sap-api-integrations-inbound-delivery-reads/SAP_API_Caller/caller.go#L60",
 	"function": "sap-api-integrations-inbound-delivery-reads/SAP_API_Caller.(*SAPAPICaller).Header",
 	"level": "INFO",
-	"message": "[{XXXXXXXXXXXXXXXXXXXXXXXXXXXXX}]",
-	"time": "2021-12-11T15:33:00.054455+09:00"
+	"message": [
+		{
+			"ReceivingLocationTimeZone": "CET",
+			"ActualDeliveryRoute": "",
+			"ActualGoodsMovementDate": "",
+			"ActualGoodsMovementTime": "00:00:00",
+			"BillingDocumentDate": "",
+			"CompleteDeliveryIsDefined": false,
+			"ConfirmationTime": "00:00:00",
+			"CreationDate": "2022-09-16",
+			"CreationTime": "20:34:28",
+			"CustomerGroup": "",
+			"DeliveryBlockReason": "",
+			"DeliveryDate": "2022-09-15",
+			"DeliveryDocument": "180000047",
+			"DeliveryDocumentBySupplier": "",
+			"DeliveryDocumentType": "EL",
+			"DeliveryIsInPlant": false,
+			"DeliveryPriority": "00",
+			"DeliveryTime": "22:00:00",
+			"DocumentDate": "2022-09-16",
+			"GoodsIssueOrReceiptSlipNumber": "",
+			"GoodsIssueTime": "00:00:00",
+			"HeaderBillgIncompletionStatus": "C",
+			"HeaderBillingBlockReason": "",
+			"HeaderDelivIncompletionStatus": "C",
+			"HeaderGrossWeight": "2.000",
+			"HeaderNetWeight": "1.000",
+			"HeaderPackingIncompletionSts": "C",
+			"HeaderPickgIncompletionStatus": "C",
+			"HeaderVolume": "0.000",
+			"HeaderVolumeUnit": "",
+			"HeaderWeightUnit": "KG",
+			"IncotermsClassification": "",
+			"IsExportDelivery": "",
+			"LastChangeDate": "",
+			"LoadingDate": "",
+			"LoadingPoint": "",
+			"LoadingTime": "00:00:00",
+			"MeansOfTransport": "",
+			"OrderCombinationIsAllowed": true,
+			"OrderID": "",
+			"PickedItemsLocation": "",
+			"PickingDate": "",
+			"PickingTime": "00:00:00",
+			"PlannedGoodsIssueDate": "",
+			"ProposedDeliveryRoute": "",
+			"ReceivingPlant": "",
+			"RouteSchedule": "",
+			"SalesDistrict": "",
+			"SalesOffice": "",
+			"SalesOrganization": "",
+			"SDDocumentCategory": "7",
+			"ShipmentBlockReason": "",
+			"ShippingCondition": "",
+			"ShippingPoint": "",
+			"ShippingType": "",
+			"ShipToParty": "",
+			"SoldToParty": "",
+			"Supplier": "100000",
+			"TotalBlockStatus": "",
+			"TotalCreditCheckStatus": "",
+			"TotalNumberOfPackage": "00000",
+			"TransactionCurrency": "",
+			"TransportationGroup": "",
+			"TransportationPlanningDate": "",
+			"TransportationPlanningStatus": "",
+			"TransportationPlanningTime": "00:00:00",
+			"UnloadingPointName": "",
+			"to_Partner": "http://100.21.57.120:8080/sap/opu/odata/sap/API_INBOUND_DELIVERY_SRV;v=0002/A_InbDeliveryHeader('180000047')/to_DeliveryDocumentPartner",
+			"to_Item": "http://100.21.57.120:8080/sap/opu/odata/sap/API_INBOUND_DELIVERY_SRV;v=0002/A_InbDeliveryHeader('180000047')/to_DeliveryDocumentItem"
+		}
+	],
+	"time": "2022-09-16T22:42:12+09:00"
 }
+
 ```

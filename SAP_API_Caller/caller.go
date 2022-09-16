@@ -28,7 +28,7 @@ func NewSAPAPICaller(baseUrl, sapClientNumber string, requestClient *sap_api_req
 	}
 }
 
-func (c *SAPAPICaller) AsyncGetInboundDelivery(deliveryDocument, deliveryDocumentItem string, accepter []string) {
+func (c *SAPAPICaller) AsyncGetInboundDelivery(deliveryDocument, deliveryDocumentItem, referenceSDDocument, referenceSDDocumentItem string, accepter []string) {
 	wg := &sync.WaitGroup{}
 	wg.Add(len(accepter))
 	for _, fn := range accepter {
@@ -41,6 +41,11 @@ func (c *SAPAPICaller) AsyncGetInboundDelivery(deliveryDocument, deliveryDocumen
 		case "Item":
 			func() {
 				c.Item(deliveryDocument, deliveryDocumentItem)
+				wg.Done()
+			}()
+		case "PurchaseOrder":
+			func() {
+				c.PurchaseOrder(referenceSDDocument, referenceSDDocumentItem)
 				wg.Done()
 			}()
 		default:
@@ -172,6 +177,34 @@ func (c *SAPAPICaller) callInboundDeliverySrvAPIRequirementItem(api, deliveryDoc
 	return data, nil
 }
 
+func (c *SAPAPICaller) PurchaseOrder(referenceSDDocument, referenceSDDocumentItem string) {
+	data, err := c.callInboundDeliverySrvAPIRequirementPurchaseOrder("A_InbDeliveryItem", referenceSDDocument, referenceSDDocumentItem)
+	if err != nil {
+		c.log.Error(err)
+		return
+	}
+	c.log.Info(data)
+}
+
+func (c *SAPAPICaller) callInboundDeliverySrvAPIRequirementPurchaseOrder(api, referenceSDDocument, referenceSDDocumentItem string) ([]sap_api_output_formatter.Item, error) {
+	url := strings.Join([]string{c.baseURL, "API_INBOUND_DELIVERY_SRV;v=0002", api}, "/")
+
+	param := c.getQueryWithPurchaseOrder(map[string]string{}, referenceSDDocument, referenceSDDocumentItem)
+
+	resp, err := c.requestClient.Request("GET", url, param, "")
+	if err != nil {
+		return nil, fmt.Errorf("API request error: %w", err)
+	}
+	defer resp.Body.Close()
+
+	byteArray, _ := ioutil.ReadAll(resp.Body)
+	data, err := sap_api_output_formatter.ConvertToItem(byteArray, c.log)
+	if err != nil {
+		return nil, fmt.Errorf("convert error: %w", err)
+	}
+	return data, nil
+}
+
 func (c *SAPAPICaller) getQueryWithHeader(params map[string]string, deliveryDocument string) map[string]string {
 	if len(params) == 0 {
 		params = make(map[string]string, 1)
@@ -185,5 +218,13 @@ func (c *SAPAPICaller) getQueryWithItem(params map[string]string, deliveryDocume
 		params = make(map[string]string, 1)
 	}
 	params["$filter"] = fmt.Sprintf("DeliveryDocument eq '%s' and DeliveryDocumentItem eq '%s'", deliveryDocument, deliveryDocumentItem)
+	return params
+}
+
+func (c *SAPAPICaller) getQueryWithPurchaseOrder(params map[string]string, referenceSDDocument, referenceSDDocumentItem string) map[string]string {
+	if len(params) == 0 {
+		params = make(map[string]string, 1)
+	}
+	params["$filter"] = fmt.Sprintf("ReferenceSDDocument eq '%s' and ReferenceSDDocumentItem eq '%s'", referenceSDDocument, referenceSDDocumentItem)
 	return params
 }

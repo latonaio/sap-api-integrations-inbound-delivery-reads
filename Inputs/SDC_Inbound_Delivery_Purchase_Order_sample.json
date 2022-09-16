@@ -4,7 +4,7 @@
 	"redis_key": "abcdefg",
 	"filepath": "/var/lib/aion/Data/rededge_sdc/abcdef.json",
 	"DeliveryDocument": {
-		"DeliveryDocument": "180000047",
+		"DeliveryDocument": "",
 		"ReceivingLocationTimeZone": "",
 		"ActualDeliveryRoute": "",
 		"ActualGoodsMovementDate": "",
@@ -164,8 +164,8 @@
 			"ProfitCenter": "",
 			"QuantityIsFixed": null,
 			"ReceivingPoint": "",
-			"ReferenceSDDocument": "",
-			"ReferenceSDDocumentItem": "",
+			"ReferenceSDDocument": "4500000003",
+			"ReferenceSDDocumentItem": "000010",
 			"SalesDocumentItemType": "",
 			"SalesGroup": "",
 			"SalesOffice": "",
@@ -179,7 +179,7 @@
 		}
 	},
 	"api_schema": "SAPInboundDeliveryReads",
-	"accepter": ["Header"],
-	"delivery_document": "180000047",
+	"accepter": ["PurchaseOrder"],
+	"delivery_document": "",
 	"deleted": ""
 }

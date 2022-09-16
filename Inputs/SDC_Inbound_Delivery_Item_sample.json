@@ -4,7 +4,7 @@
 	"redis_key": "abcdefg",
 	"filepath": "/var/lib/aion/Data/rededge_sdc/abcdef.json",
 	"DeliveryDocument": {
-		"DeliveryDocument": "180000000",
+		"DeliveryDocument": "180000047",
 		"ReceivingLocationTimeZone": "",
 		"ActualDeliveryRoute": "",
 		"ActualGoodsMovementDate": "",
@@ -180,6 +180,6 @@
 	},
 	"api_schema": "SAPInboundDeliveryReads",
 	"accepter": ["Item"],
-	"delivery_document": "180000000",
+	"delivery_document": "180000047",
 	"deleted": ""
 }

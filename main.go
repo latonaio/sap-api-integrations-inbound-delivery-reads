@@ -21,18 +21,20 @@ func main() {
 		gc,
 		l,
 	)
-	inputSDC := fr.ReadSDC("./Inputs/SDC_Inbound_Delivery_Header_sample.json")
+	inputSDC := fr.ReadSDC("./Inputs/SDC_Inbound_Delivery_Item_sample.json")
 	sap_api_time_value_converter.ChangeTimeFormatToSAPFormatStruct(&inputSDC)
 	accepter := inputSDC.Accepter
 	if len(accepter) == 0 || accepter[0] == "All" {
 		accepter = []string{
-			"Header", "Item",
+			"Header", "Item", "PurchaseOrder",
 		}
 	}
 
 	caller.AsyncGetInboundDelivery(
 		inputSDC.InboundDelivery.DeliveryDocument,
 		inputSDC.InboundDelivery.DeliveryDocumentItem.DeliveryDocumentItem,
+		inputSDC.InboundDelivery.DeliveryDocumentItem.ReferenceSDDocument,
+		inputSDC.InboundDelivery.DeliveryDocumentItem.ReferenceSDDocumentItem,
 		accepter,
 	)
 }
